@@ -4,127 +4,42 @@ import { table } from 'console';
 import * as vscode from 'vscode';
 const fs = require('fs');
 const path = require('path');
-import * as util from "util";
-import * as inspector from "inspector";
-
+import * as util from 'util';
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
-	console.log('Congratulations, your extension "helloworld" is now active!');
-
-	// inspector.open();
-
-	const session = new inspector.Session();
-	session.connect();
-	//make post into a promise function
-	const post = <any>util.promisify(session.post).bind(session);
-
-	await post("Debugger.enable");
-	await post("Runtime.enable");
-
-	const disposable = vscode.commands.registerCommand('extension.scanDocument', async () => {
-		//access the active window that is running the extension
-		const activeEditor = vscode!.window!.activeTextEditor;
-		if (!activeEditor) {
-			return;
-		}
-
-		//access the document text from the active window
-		const document = activeEditor!.document;
-		//translate the document path from uri to string
-		const fileName = path.basename(document.uri.toString());
-
-		console.log('DOCUMENT IS', document);
-		console.log('FILENAME', fileName);
-
-		//compile the script from the page
-		const { scriptId }  = await post("Runtime.compileScript", {
-			expression: document.getText(),
-			sourceURL: fileName,
-			persistScript: true
-		});
-		// const scriptIdObj = scriptId.exceptionDetails.stackTrace.callFrames;
-		console.log('SCRIPTID IS', scriptId);
-		// const scriptIdArray = scriptIdObj.map((element: Object) => element.scriptId);
-		
-		// run the script 
-		await post("Runtime.runScript", {
-			scriptId
-		});
-
-		// access variables from the app
-		const data = await post("Runtime.globalLexicalScopeNames", {
-			executionContextId: 1
-		});
-		console.log('DATA IS', data);
-
-		// get the evaluated result from running the script
-		const evaluate = await data.names.map(async (expression: string) => {
-			console.log('EXPRESSION IS', expression);
-			const { result: { value }} = await post("Runtime.evaluate", {
-				expression,
-				contextId: 1
-			});
-			console.log('VALUE IS', value);
-				const output = vscode.window.createOutputChannel('METRICS');
-				output.show();
-				output.appendLine(value);
-			const { result } = await post("Debugger.searchInContent", {
-				scriptId,
-				query: expression
-			});
-			console.log('RESULT IS', result);
-		});
-		console.log('EVALUATE IS', evaluate);
-		
-});
-	//close the inspector
-	context.subscriptions.push(disposable);
+  console.log('Congratulations, your extension "helloworld" is now active!');
+  //name the command to be called on any file in the application
+  const disposable = vscode.commands.registerCommand(
+    'extension.generateMetrics',
+    async () => {
+      // this is getting the application's root folder filepath string from its uri
+      const rootFolderPath = vscode.workspace.workspaceFolders[0].uri.path;
+      // console.log('VSCODE WORKSPACE FOLDERS IS', rootFolderUri);
+      // this gives us the fileName - we join the root folder URI with the file we are looking for, which is metrics.json
+      const fileName = path.join(rootFolderPath, '/metrics.json');
+      // this parses our fileName to an URI - we need to do this for when we run openTextDocument below 
+      const fileUri = vscode.Uri.parse(fileName);
+       console.log('DOC URI IS', fileUri);
+      // open the file at the Uri path and get the text
+      const metricData = await vscode.workspace
+        .openTextDocument(fileUri)
+        .then((document) => {
+          return document.getText();
+        });
+      const parsedMetricData = JSON.parse(metricData);
+      // console.log('FILENAME', fileName);
+      console.log('PARSED METRIC FILE IS', parsedMetricData.metrics);
+      const fcp = parsedMetricData.metrics[0]["FCP"];
+      const cls = parsedMetricData.metrics[0]["CLS"];
+      const lcp = parsedMetricData.metrics[0]["LCP"];
+      const metricOutput = `FCP = ${fcp} | CLS = ${cls} | LCP = ${lcp}`;
+      const output = vscode.window.createOutputChannel('METRICS');
+        output.show();
+        output.appendLine(metricOutput);
+    }
+  );
+  context.subscriptions.push(disposable);
 }
-
 // this method is called when your extension is deactivated
 export function deactivate() {}
-
-
-// Debugger.searchInContent
-// Searches for given string in script content.
-
-
-// let disposable = vscode.commands.registerCommand('helloworld.helloWorld', () => {
-	
-// 	vscode.window.showInformationMessage('Hello VS Code from Hello World Test!');
-// 	const output = vscode.window.createOutputChannel('Test');
-// 	output.show();
-// 	const data = `CLS is 3.2, FID is 0.4ms, LCP is 1.2s`;
-// 	output.appendLine(data);
-// });
-// console.log('TABLE IS', table);
-
-
-	// const editor = vscode.window.activeTextEditor;
-
-	// 	if (editor) {
-	// 		let document = editor.document;
-
-	// 		// Get the document text
-	// 		const documentText = document.getText();
-	// 		// vscode.commands.executeCommand('vscode.openFolder', '/styles');
-	// 		console.log(documentText);
-			
-	// 		// DO SOMETHING WITH `documentText`
-	// }
-
-
-	// console.log(vscode.workspace.getWorkspaceFolder(vscode.Uri.file('/metrics.js')));
-
-
-	// // const result = fs.readFile('../metrics.js', function read(err: object, data: any) {
-		// 	if (err) {
-		// 		throw err;
-		// 	};
-		// 	return data;
-
-		// });
-		// console.log(result);
-		// vscode.workspace.workspaceFile;
-		// console.log(vscode.workspace.getWorkspaceFolder);
