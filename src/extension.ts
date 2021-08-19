@@ -20,7 +20,7 @@ export async function activate(context: vscode.ExtensionContext) {
       const fileName = path.join(rootFolderPath, '/metrics.json');
       // this parses our fileName to an URI - we need to do this for when we run openTextDocument below 
       const fileUri = vscode.Uri.parse(fileName);
-       console.log('DOC URI IS', fileUri);
+      //  console.log('FILEURI IS', fileUri);
       // open the file at the Uri path and get the text
       const metricData = await vscode.workspace
         .openTextDocument(fileUri)
@@ -29,7 +29,7 @@ export async function activate(context: vscode.ExtensionContext) {
         });
       const parsedMetricData = JSON.parse(metricData);
       // console.log('FILENAME', fileName);
-      console.log('PARSED METRIC FILE IS', parsedMetricData.metrics);
+      // console.log('PARSED METRIC FILE IS', parsedMetricData.metrics);
       const fcp = parsedMetricData.metrics[0]["FCP"];
       const cls = parsedMetricData.metrics[0]["CLS"];
       const lcp = parsedMetricData.metrics[0]["LCP"];
@@ -37,7 +37,13 @@ export async function activate(context: vscode.ExtensionContext) {
       const output = vscode.window.createOutputChannel('METRICS');
         output.show();
         output.appendLine(metricOutput);
+        vscode.workspace.onDidChangeTextDocument(e => {
+          if (e.document.uri.path === fileName) {
+            console.log('It successfully logged when file was updated.');
+          }
+        });
     }
+    
   );
   context.subscriptions.push(disposable);
 }
