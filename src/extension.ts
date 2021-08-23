@@ -14,14 +14,20 @@ export async function activate(context: vscode.ExtensionContext) {
   const rootFolderPath = vscode.workspace.workspaceFolders[0].uri.path;
   // this gives us the fileName - we join the root folder URI with the file we are looking for, which is metrics.json
   const fileName = path.join(rootFolderPath, '/metrics.json');
+  const statusBarItem = vscode.window.createStatusBarItem(
+    vscode.StatusBarAlignment.Left,
+    0
+  );
+  statusBarItem.command = 'extension.generateMetrics';
+  statusBarItem.text = 'Next Step';
+  statusBarItem.show();
 
   const disposable = vscode.commands.registerCommand(
     'extension.generateMetrics',
     async () => {
-
-  vscode.workspace.onDidChangeTextDocument(async (e) => {
-    if (e.document.uri.path === fileName) {
-      // name the command to be called on any file in the application
+      vscode.workspace.onDidChangeTextDocument(async (e) => {
+        if (e.document.uri.path === fileName) {
+          // name the command to be called on any file in the application
           // this parses our fileName to an URI - we need to do this for when we run openTextDocument below
           const fileUri = vscode.Uri.parse(fileName);
           //  console.log('FILEURI IS', fileUri);
@@ -33,11 +39,16 @@ export async function activate(context: vscode.ExtensionContext) {
             });
           const parsedMetricData = JSON.parse(metricData);
           // console.log('FILENAME', fileName);
-          // console.log('PARSED METRIC FILE IS', parsedMetricData.metrics);
-          const fcp = parsedMetricData.metrics[0]['FCP'];
-          const cls = parsedMetricData.metrics[0]['CLS'];
-          const lcp = parsedMetricData.metrics[0]['LCP'];
-          const metricOutput = `FCP = ${fcp} | CLS = ${cls} | LCP = ${lcp}`;
+          console.log('PARSED METRIC FILE IS', parsedMetricData.metrics);
+          const fcp = (parsedMetricData.metrics[0]['FCP'] / 1000).toFixed(2);
+          const cls = parsedMetricData.metrics[0]['CLS'].toFixed(2);
+          const lcp = (parsedMetricData.metrics[0]['LCP'] / 1000).toFixed(2);
+          const fid = (parsedMetricData.metrics[0]['FID'] / 1000).toFixed(2);
+          const hydration = (
+            parsedMetricData.metrics[0]['Next.js-hydration'] / 1000
+          ).toFixed(2);
+          const ttfb = (parsedMetricData.metrics[0]['TTFB'] / 1000).toFixed(2);
+          const metricOutput = `FCP = ${fcp}s | CLS = ${cls} | LCP = ${lcp}s | FID = ${fid}s | HYDRATION = ${hydration}s| TTFB = ${ttfb}s`;
           const output = vscode.window.createOutputChannel('METRICS');
           output.show();
           output.appendLine(metricOutput);
