@@ -77,24 +77,28 @@ export async function activate(context: vscode.ExtensionContext) {
           const cls_score = isNaN(Number(cls)) ? '⚫️' : Number(cls) < 0.1 ? 'Good 🟢' : Number(fcp) < 0.25 ? 'Moderate 🟠' : 'Poor 🔴';
           const lcp_score = isNaN(Number(lcp)) ? '⚫️' : Number(lcp) < 2.5 ? 'Good 🟢' : Number(lcp) < 4 ? 'Moderate 🟠' : 'Poor 🔴';
           const fid_score = isNaN(Number(fid)) ? '⚫️' : Number(fid) < 1 ? 'Good 🟢' : Number(fid) < 3 ? 'Moderate 🟠' : 'Poor 🔴';
+          const ttfb_score = isNaN(Number(ttfb)) ? '⚫️' : Number(ttfb) < 0.6 ? 'Good 🟢' : 'Poor 🔴';
+          //0.6
           const fcp_link = 'https://web.dev/fcp/';
           const cls_link = 'https://web.dev/cls/';
           const lcp_link = 'https://web.dev/lcp/';
           const fid_link = 'https://web.dev/fid/';
           const ttfb_link = 'https://web.dev/time-to-first-byte/';
-          const helpFixScore = `Hey, check out these resources to improve areas where you're falling short: ${fcp_score === 'Poor 🔴' ? fcp_link : ""} ${cls_score === 'Poor 🔴' ? cls_link : ""} ${fid_score === 'Poor 🔴' ? fid_link : ""} ${lcp_score === 'Poor 🔴' ? lcp_link : ""}`          
+          const helpFixScore = `Want to improve "poor" areas?: ${fcp_score === 'Poor 🔴' ? fcp_link : ""} ${cls_score === 'Poor 🔴' ? cls_link : ""} ${fid_score === 'Poor 🔴' ? fid_link : ""} ${lcp_score === 'Poor 🔴' ? lcp_link : ""} ${ttfb_score === 'Poor 🔴' ? ttfb_link : ""}`    
           const metricOutput = `      Value
 FCP:  ${fcp}s ${fcp_score} 
 CLS:  ${cls}  ${cls_score}
 LCP:  ${lcp}s ${lcp_score}
 FID:  ${isNaN(Number(fid)) ? 'n/a' : Number(fid)} ${fid_score}
-TTFB: ${ttfb}s `;
-//           const nextOutput = `      Next.js Values
-// FCP:  ${hydration}s`;
+TTFB: ${ttfb}s ${ttfb_score}\n`;
+
           output.clear();
           output.show();
           output.appendLine(metricOutput);
           output.appendLine(helpFixScore);
+          // [[fcp_score, fcp_link], [cls_score, cls_link], [lcp_score, lcp_link], [fid_score, fid_link], [ttfb_score, ttfb_link]].filter( score => {
+          //   return score[0] === 'Poor 🔴';
+          // }).forEach(score => output.appendLine(score[1]))
         }
       });
     }
