@@ -71,15 +71,23 @@ export async function activate(context: vscode.ExtensionContext) {
           const cls = parsedMetricData.metrics[0]['CLS'].toFixed(2);
           const lcp = (parsedMetricData.metrics[0]['LCP'] / 1000).toFixed(2);
           const fid = (parsedMetricData.metrics[0]['FID'] / 1000).toFixed(2);
+          const fcp_score = Number(fcp) < 1.8 ? 'Good 🟢' : Number(fcp) < 3 ? 'Moderate 🟠' : 'Poor 🔴';
+          const fcp_link = 'https://web.dev/fid/';
+          const helpFixScore = `Hey, check out these resources to improve areas where you're falling short:${fcp_score === 'Poor 🔴' ? fcp_link : ""}`
           const hydration = (
             parsedMetricData.metrics[0]['Next.js-hydration'] / 1000
           ).toFixed(2);
           const ttfb = (parsedMetricData.metrics[0]['TTFB'] / 1000).toFixed(2);
-          const metricOutput = `FCP = ${fcp}s | CLS = ${cls} | LCP = ${lcp}s | FID = ${fid}s | HYDRATION = ${hydration}s| TTFB = ${ttfb}s`;
+          const metricOutput = `      Value
+FCP:  ${fcp}s ${fcp_score} 
+CLS:  ${cls}  ${Number(cls) < 0.1 ? 'Good 🟢' : Number(fcp) < 0.25 ? 'Moderate 🟠' : 'Poor 🔴'}
+LCP:  ${lcp}s ${Number(lcp) < 2.5 ? 'Good 🟢' : Number(lcp) < 4 ? 'Moderate 🟠' : 'Poor 🔴'}
+FID:  ${fid}s ${Number(fcp) < 1 ? 'Good 🟢' : Number(fid) < 3 ? 'Moderate 🟠' : 'Poor 🔴'}\nTTFB ${ttfb}s `;
           output.clear();
           output.show();
           output.appendLine(metricOutput);
-          
+          output.appendLine(helpFixScore);
+          //if that variable is Poor 
         }
       });
     }
