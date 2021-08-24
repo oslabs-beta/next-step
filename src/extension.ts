@@ -85,12 +85,12 @@ export async function activate(context: vscode.ExtensionContext) {
           const fid_link = 'https://web.dev/fid/';
           const ttfb_link = 'https://web.dev/time-to-first-byte/';
           const helpFixScore = `Want to improve "poor" areas?: ${fcp_score === 'Poor 🔴' ? fcp_link : ""} ${cls_score === 'Poor 🔴' ? cls_link : ""} ${fid_score === 'Poor 🔴' ? fid_link : ""} ${lcp_score === 'Poor 🔴' ? lcp_link : ""} ${ttfb_score === 'Poor 🔴' ? ttfb_link : ""}`    
-          const metricOutput = `      Value
-FCP:  ${fcp}s ${fcp_score} 
-CLS:  ${cls}  ${cls_score}
-LCP:  ${lcp}s ${lcp_score}
-FID:  ${isNaN(Number(fid)) ? 'n/a' : Number(fid)} ${fid_score}
-TTFB: ${ttfb}s ${ttfb_score}\n`;
+          const metricOutput = `       Value
+FCP:   ${fcp + 's'}${' '.repeat(7 - fcp.length)}${fcp_score} 
+CLS:   ${cls}${' '.repeat(8 - cls.length)}${cls_score}
+LCP:   ${lcp + 's'}${' '.repeat(7 - lcp.length)}${lcp_score}
+FID:   ${isNaN(Number(fid)) ? 'n/a' : fid + 's'}${' '.repeat(7 - fid.length)}${fid_score}
+TTFB:  ${ttfb + 's'}${' '.repeat(7 - ttfb.length)}${ttfb_score}\n`;
 
           output.clear();
           output.show();
