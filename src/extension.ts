@@ -1,10 +1,8 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+import { getVSCodeDownloadUrl } from 'vscode-test/out/util';
 const path = require('path');
 let toggle = false;
 
-// console.log('Testing before I call the command');
 export const setupExtension = () => {
   const nsPlus = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Left,
@@ -25,11 +23,7 @@ export const setupExtension = () => {
   nsMinus.show();
 };
 
-/*
-  user opens app - setupExtension shows buttons, functionality is off
-  user clicks ns+ - helper function 'startListening' runs, functionality is on
-  user clicks ns- - help function 'stopListening' runs, functionality is off
-*/
+
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -48,8 +42,6 @@ export async function activate(context: vscode.ExtensionContext) {
   // this gives us the fileName - we join the root folder URI with the file we are looking for, which is metrics.json
   const fileName = path.join(rootFolderPath, '/metrics.json');
 
-  //if toggle is false, button calls generateMetrics and set toggle to true
-  //if toggle is true, button calls stopListening and set toggle to false
 
   const generateMetrics = vscode.commands.registerCommand(
     'extension.generateMetrics',
@@ -57,6 +49,7 @@ export async function activate(context: vscode.ExtensionContext) {
       console.log('Succesfully entered registerCommand');
       toggle = true;
       vscode.workspace.onDidChangeTextDocument(async (e) => {
+        
         if (toggle) {
           console.log('Succesfully entered onDidChangeTextDocument');
           if (e.document.uri.path === fileName) {
