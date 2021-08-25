@@ -5,6 +5,7 @@ import * as vscode from 'vscode';
 const fs = require('fs');
 const path = require('path');
 import * as util from 'util';
+
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
@@ -42,7 +43,7 @@ export async function activate(context: vscode.ExtensionContext) {
           output.show();
           output.appendLine(metricOutput);
           context.subscriptions.push(disposable);
-        }
+        };
       });
     }
   );
