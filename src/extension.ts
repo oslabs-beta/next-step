@@ -78,7 +78,6 @@ export async function activate(context: vscode.ExtensionContext) {
           const lcp_score = isNaN(Number(lcp)) ? '⚫️' : Number(lcp) < 2.5 ? 'Good 🟢' : Number(lcp) < 4 ? 'Moderate 🟠' : 'Poor 🔴';
           const fid_score = isNaN(Number(fid)) ? '⚫️' : Number(fid) < 1 ? 'Good 🟢' : Number(fid) < 3 ? 'Moderate 🟠' : 'Poor 🔴';
           const ttfb_score = isNaN(Number(ttfb)) ? '⚫️' : Number(ttfb) < 0.6 ? 'Good 🟢' : 'Poor 🔴';
-          //0.6
           const fcp_link = 'https://web.dev/fcp/';
           const cls_link = 'https://web.dev/cls/';
           const lcp_link = 'https://web.dev/lcp/';
