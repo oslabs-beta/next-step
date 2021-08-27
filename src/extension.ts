@@ -47,7 +47,7 @@ export async function activate(context: vscode.ExtensionContext) {
   const wsEdit = new vscode.WorkspaceEdit();
   const newFileURI = vscode.Uri.file(rootFolderPath + '/metrics.json');
   const newFileCreate = wsEdit.createFile(newFileURI,{overwrite: true});
-  console.log(newFileCreate);
+  console.log('new file created',newFileCreate);
   vscode.workspace.applyEdit(wsEdit);
   // console.log(newFile);
 
