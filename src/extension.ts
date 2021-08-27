@@ -37,11 +37,19 @@ export async function activate(context: vscode.ExtensionContext) {
     return;
   }
 
+  const rootFolderURI = vscode.workspace.workspaceFolders[0].uri;
   const rootFolderPath = vscode.workspace.workspaceFolders[0].uri.path;
-  // const vscode.workspace.workspaceFolders: readonly vscode.WorkspaceFolder[] | undefined;
+
   // this gives us the fileName - we join the root folder URI with the file we are looking for, which is metrics.json
   const fileName = path.join(rootFolderPath, '/metrics.json');
-
+  
+  //create metrics.json file in the project rootFolder
+  const wsEdit = new vscode.WorkspaceEdit();
+  const newFileURI = vscode.Uri.file(rootFolderPath + '/metrics.json');
+  const newFileCreate = wsEdit.createFile(newFileURI,{overwrite: true});
+  console.log(newFileCreate);
+  vscode.workspace.applyEdit(wsEdit);
+  // console.log(newFile);
 
   const generateMetrics = vscode.commands.registerCommand(
     'extension.generateMetrics',
@@ -56,6 +64,7 @@ export async function activate(context: vscode.ExtensionContext) {
           // name the command to be called on any file in the application
           // this parses our fileName to an URI - we need to do this for when we run openTextDocument below
           const fileUri = vscode.Uri.parse(fileName);
+          console.log('found file', fileUri);
           // open the file at the Uri path and get the text
           const metricData = await vscode.workspace
             .openTextDocument(fileUri)
