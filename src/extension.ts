@@ -14,13 +14,12 @@ export const setupExtension = () => {
     0
   );
   nsPlus.command = 'extension.generateMetrics';
-  nsPlus.text = 'NS+';
+  nsPlus.text = 'NextStep: OFF🔴';
 
   nsMinus.command = 'extension.stopListening';
-  nsMinus.text = 'NS-';
+  nsMinus.text = 'NextStep: ON🟢';
 
-  nsPlus.show();
-  nsMinus.show();
+  return [nsPlus, nsMinus]
 };
 
 
@@ -28,7 +27,8 @@ export const setupExtension = () => {
 // your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
   console.log('Congratulations, your extension "Next Step" is now active!');
-  setupExtension();
+  const [nsPlus, nsMinus] = setupExtension();
+  nsPlus.show();
 
   const output = vscode.window.createOutputChannel('METRICS');
   // this is getting the application's root folder filepath string from its uri
@@ -47,6 +47,11 @@ export async function activate(context: vscode.ExtensionContext) {
     async () => {
       console.log('Succesfully entered registerCommand');
       toggle = true;
+      nsPlus.hide();
+      nsMinus.show();
+      output.clear();
+      output.show();
+      output.appendLine('NextStep is active');
 
       // name the command to be called on any file in the application
       // this parses our fileName to an URI - we need to do this for when we run openTextDocument below
@@ -111,6 +116,8 @@ TTFB:  ${ttfb + 's'}${' '.repeat(7 - ttfb.length)}${ttfb_score}\n`;
     'extension.stopListening',
     async () => {
       toggle = false;
+      nsMinus.hide();
+      nsPlus.show();
       output.clear();
       // write functionality to stop displaying Metrics
       console.log('Successfully entered extension.stopListening');
