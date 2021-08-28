@@ -24,7 +24,6 @@ export const setupExtension = () => {
 };
 
 
-
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
@@ -42,24 +41,6 @@ export async function activate(context: vscode.ExtensionContext) {
 
   // this gives us the fileName - we join the root folder URI with the file we are looking for, which is metrics.json
   const fileName = path.join(rootFolderPath, '/metrics.json');
-
-  // async function createAndUpdateFile() {
-  //   //create metrics.json file in the project rootFolder
-  //   const createFile = new vscode.WorkspaceEdit();
-  //   const newFileURI = vscode.Uri.file(rootFolderPath + '/metrics.json');
-  //   createFile.createFile(newFileURI,{overwrite: true});
-  //   const updateFile = new vscode.WorkspaceEdit();
-  //   const newPosition = new vscode.Position(0, 0);
-  //   updateFile.insert(newFileURI,newPosition, `{ "metrics": [{}] }`);
-  //   const runCreateFile = await vscode.workspace
-  //     .applyEdit(createFile)
-  //     .then(() => {
-  //       return vscode.workspace.applyEdit(updateFile);
-  //     });
-  // };
-
-  // createAndUpdateFile();
-  
 
   const generateMetrics = vscode.commands.registerCommand(
     'extension.generateMetrics',
