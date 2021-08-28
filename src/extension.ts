@@ -24,7 +24,6 @@ export const setupExtension = () => {
 };
 
 
-
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
@@ -37,31 +36,39 @@ export async function activate(context: vscode.ExtensionContext) {
     return;
   }
 
+  const rootFolderURI = vscode.workspace.workspaceFolders[0].uri;
   const rootFolderPath = vscode.workspace.workspaceFolders[0].uri.path;
-  // const vscode.workspace.workspaceFolders: readonly vscode.WorkspaceFolder[] | undefined;
+
   // this gives us the fileName - we join the root folder URI with the file we are looking for, which is metrics.json
   const fileName = path.join(rootFolderPath, '/metrics.json');
-
 
   const generateMetrics = vscode.commands.registerCommand(
     'extension.generateMetrics',
     async () => {
       console.log('Succesfully entered registerCommand');
       toggle = true;
+
+      // name the command to be called on any file in the application
+      // this parses our fileName to an URI - we need to do this for when we run openTextDocument below
+      const fileUri = vscode.Uri.parse(fileName);
+      vscode.workspace.openTextDocument(fileUri);
+      
       vscode.workspace.onDidChangeTextDocument(async (e) => {
-        
+        // name the command to be called on any file in the application
+        // this parses our fileName to an URI - we need to do this for when we run openTextDocument below
+
         if (toggle) {
           console.log('Succesfully entered onDidChangeTextDocument');
         if (e.document.uri.path === fileName) {
-          // name the command to be called on any file in the application
-          // this parses our fileName to an URI - we need to do this for when we run openTextDocument below
-          const fileUri = vscode.Uri.parse(fileName);
           // open the file at the Uri path and get the text
           const metricData = await vscode.workspace
             .openTextDocument(fileUri)
             .then((document) => {
               return document.getText();
             });
+          // await vscode.workspace.onDidOpenTextDocument((document) => {
+          //   return document.getText();
+          // });
           const parsedMetricData = JSON.parse(metricData);
           const fcp = (parsedMetricData.metrics[0]['FCP'] / 1000).toFixed(2);
           const cls = parsedMetricData.metrics[0]['CLS'].toFixed(2);
