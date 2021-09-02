@@ -1,3 +1,4 @@
+import { AsyncLocalStorage } from 'async_hooks';
 import * as vscode from 'vscode';
 import { getVSCodeDownloadUrl } from 'vscode-test/out/util';
 const path = require('path');
@@ -69,30 +70,59 @@ export async function activate(context: vscode.ExtensionContext) {
           // await vscode.workspace.onDidOpenTextDocument((document) => {
           //   return document.getText();
           // });
-          const parsedMetricData = JSON.parse(metricData);
-          const fcp = (parsedMetricData.metrics[0]['FCP'] / 1000).toFixed(2);
-          const cls = parsedMetricData.metrics[0]['CLS'].toFixed(2);
-          const lcp = (parsedMetricData.metrics[0]['LCP'] / 1000).toFixed(2);
-          const fid = (parsedMetricData.metrics[0]['FID'] / 1000).toFixed(2);
-          const hydration = (parsedMetricData.metrics[0]['Next.js-hydration'] / 1000).toFixed(2);
-          const ttfb = (parsedMetricData.metrics[0]['TTFB'] / 1000).toFixed(2);
-          const fcp_score = isNaN(Number(fcp)) ? '⚫️' : Number(fcp) < 1.8 ? 'Good 🟢' : Number(fcp) < 3 ? 'Moderate 🟠' : 'Poor 🔴';
-          const cls_score = isNaN(Number(cls)) ? '⚫️' : Number(cls) < 0.1 ? 'Good 🟢' : Number(cls) < 0.25 ? 'Moderate 🟠' : 'Poor 🔴';
-          const lcp_score = isNaN(Number(lcp)) ? '⚫️' : Number(lcp) < 2.5 ? 'Good 🟢' : Number(lcp) < 4 ? 'Moderate 🟠' : 'Poor 🔴';
-          const fid_score = isNaN(Number(fid)) ? '⚫️' : Number(fid) < 1 ? 'Good 🟢' : Number(fid) < 3 ? 'Moderate 🟠' : 'Poor 🔴';
+          const { metrics , logs } = JSON.parse(metricData);
+          const sum = { FCP: [], LCP: [], TTFB: [], CLS: [], FID: []};
+          for (let i = 0; i < logs.length; i++) {
+            
+            for(let v of Object.keys(sum)) {
+              if (logs[i][v] !== undefined) sum[v].push(logs[i][v]);
+            }
+          }
+          console.log("sum is: ", sum);
+          const avg = {FCP: 0, CLS: 0, LCP: 0, FID: 0, TTFB: 0};
+          for (let [key, arr] of Object.entries(sum)) {
+            avg[key] = arr.reduce((a, c) => a + c)/arr.length;
+          }
+          console.log("avg is: ", avg);
+
+          const fcp = (metrics.FCP / 1000).toFixed(2);
+          const cls = metrics.CLS.toFixed(2);
+          const lcp = (metrics.LCP / 1000).toFixed(2);
+          const fid = metrics.FID ? (metrics.FID / 1000).toFixed(2) : 'N/A';
+          const hydration = (metrics['Next.js-hydration'] / 1000).toFixed(2);
+          const ttfb = (metrics.TTFB / 1000).toFixed(2);
+          const fcp_score = isNaN(Number(fcp)) ? '⚫️' : Number(fcp) < 1.8 ? 'Good 🟢' : Number(fcp) < 3 ? 'Needs Improvement 🟠' : 'Poor 🔴';
+          const cls_score = isNaN(Number(cls)) ? '⚫️' : Number(cls) < 0.1 ? 'Good 🟢' : Number(cls) < 0.25 ? 'Needs Improvement 🟠' : 'Poor 🔴';
+          const lcp_score = isNaN(Number(lcp)) ? '⚫️' : Number(lcp) < 2.5 ? 'Good 🟢' : Number(lcp) < 4 ? 'Needs Improvement 🟠' : 'Poor 🔴';
+          const fid_score = isNaN(Number(fid)) ? '⚫️' : Number(fid) < 1 ? 'Good 🟢' : Number(fid) < 3 ? 'Needs Improvement 🟠' : 'Poor 🔴';
           const ttfb_score = isNaN(Number(ttfb)) ? '⚫️' : Number(ttfb) < 0.6 ? 'Good 🟢' : 'Poor 🔴';
-          const fcp_link = 'https://web.dev/fcp/';
-          const cls_link = 'https://web.dev/cls/';
-          const lcp_link = 'https://web.dev/lcp/';
-          const fid_link = 'https://web.dev/fid/';
-          const ttfb_link = 'https://web.dev/time-to-first-byte/';
-          const helpFixScore = `Want to improve "poor" areas?: ${fcp_score === 'Poor 🔴' ? fcp_link : ""} ${cls_score === 'Poor 🔴' ? cls_link : ""} ${fid_score === 'Poor 🔴' ? fid_link : ""} ${lcp_score === 'Poor 🔴' ? lcp_link : ""} ${ttfb_score === 'Poor 🔴' ? ttfb_link : ""}`;   
-          const metricOutput = `       Value
-FCP:   ${fcp + 's'}${' '.repeat(7 - fcp.length)}${fcp_score} 
-CLS:   ${cls}${' '.repeat(8 - cls.length)}${cls_score}
-LCP:   ${lcp + 's'}${' '.repeat(7 - lcp.length)}${lcp_score}
-FID:   ${isNaN(Number(fid)) ? 'n/a' : fid + 's'}${' '.repeat(7 - fid.length)}${fid_score}
-TTFB:  ${ttfb + 's'}${' '.repeat(7 - ttfb.length)}${ttfb_score}\n`;
+
+          const fcp_avg = (avg.FCP / 1000).toFixed(2);
+          const cls_avg = avg.CLS.toFixed(2);
+          const lcp_avg = (avg.LCP / 1000).toFixed(2);
+          const fid_avg = avg.FID ? (avg.FID / 1000).toFixed(2) : 'N/A';
+          const ttfb_avg = (avg.TTFB / 1000).toFixed(2);
+          const fcp_avg_score = isNaN(Number(fcp_avg)) ? '⚫️     ' : Number(fcp_avg) < 1.8 ? 'Good 🟢' : Number(fcp_avg) < 3 ? 'Needs Improvement 🟠' : 'Poor 🔴';
+          const cls_avg_score = isNaN(Number(cls_avg)) ? '⚫️     ' : Number(cls_avg) < 0.1 ? 'Good 🟢' : Number(cls_avg) < 0.25 ? 'Needs Improvement 🟠' : 'Poor 🔴';
+          const lcp_avg_score = isNaN(Number(lcp_avg)) ? '⚫️     ' : Number(lcp_avg) < 2.5 ? 'Good 🟢' : Number(lcp_avg) < 4 ? 'Needs Improvement 🟠' : 'Poor 🔴';
+          const fid_avg_score = isNaN(Number(fid_avg)) ? '⚫️     ' : Number(fid_avg) < 1 ? 'Good 🟢' : Number(fid_avg) < 3 ? 'Needs Improvement 🟠' : 'Poor 🔴';
+          const ttfb_avg_score = isNaN(Number(ttfb_avg)) ? '⚫️     ' : Number(ttfb_avg) < 0.6 ? 'Good 🟢' : 'Poor 🔴';
+
+          const fcp_link = 'https://web.dev/fcp/ ';
+          const cls_link = 'https://web.dev/cls/ ';
+          const lcp_link = 'https://web.dev/lcp/ ';
+          const fid_link = 'https://web.dev/fid/ ';
+          const ttfb_link = 'https://web.dev/time-to-first-byte/ ';
+          const helpFixScore = `Want to improve "poor" areas?: ${fcp_score === 'Poor 🔴' ? fcp_link : ""}${cls_score === 'Poor 🔴' ? cls_link : ""}${fid_score === 'Poor 🔴' ? fid_link : ""}${lcp_score === 'Poor 🔴' ? lcp_link : ""}${ttfb_score === 'Poor 🔴' ? ttfb_link : ""}`;   
+          const metricOutput = `----------------------------------------
+Metric | Value            | Average
+----------------------------------------
+FCP:   | ${fcp + 's'}${' '.repeat(5 - fcp.length)} ${fcp_score}  | ${fcp_avg} ${fcp_avg_score}
+CLS:   | ${cls}${' '.repeat(6 - cls.length)} ${cls_score}  | ${cls_avg} ${cls_avg_score}
+LCP:   | ${lcp + 's'}${' '.repeat(5 - lcp.length)} ${lcp_score}  | ${lcp_avg} ${lcp_avg_score}
+FID:   | ${fid + 's'}${' '.repeat(5 - fid.length)} ${fid_score}  | ${fid_avg} ${fid_avg_score}
+TTFB:  | ${ttfb + 's'}${' '.repeat(5 - ttfb.length)} ${ttfb_score}  | ${ttfb_avg} ${ttfb_avg_score}
+----------------------------------------\n`;
           output.clear();
           output.show();
           output.appendLine('testing');
