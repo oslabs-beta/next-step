@@ -101,11 +101,11 @@ export async function activate(context: vscode.ExtensionContext) {
           const lcp_avg = (avg.LCP / 1000).toFixed(2);
           const fid_avg = avg.FID ? (avg.FID / 1000).toFixed(2) : 'N/A';
           const ttfb_avg = (avg.TTFB / 1000).toFixed(2);
-          const fcp_avg_score = isNaN(Number(fcp_avg)) ? '⚫️' : Number(fcp_avg) < 1.8 ? 'Good 🟢' : Number(fcp_avg) < 3 ? 'Needs Improvement 🟠' : 'Poor 🔴';
-          const cls_avg_score = isNaN(Number(cls_avg)) ? '⚫️' : Number(cls_avg) < 0.1 ? 'Good 🟢' : Number(cls_avg) < 0.25 ? 'Needs Improvement 🟠' : 'Poor 🔴';
-          const lcp_avg_score = isNaN(Number(lcp_avg)) ? '⚫️' : Number(lcp_avg) < 2.5 ? 'Good 🟢' : Number(lcp_avg) < 4 ? 'Needs Improvement 🟠' : 'Poor 🔴';
-          const fid_avg_score = isNaN(Number(fid_avg)) ? '⚫️' : Number(fid_avg) < 1 ? 'Good 🟢' : Number(fid_avg) < 3 ? 'Needs Improvement 🟠' : 'Poor 🔴';
-          const ttfb_avg_score = isNaN(Number(ttfb_avg)) ? '⚫️' : Number(ttfb_avg) < 0.6 ? 'Good 🟢' : 'Poor 🔴';
+          const fcp_avg_score = isNaN(Number(fcp_avg)) ? '⚫️     ' : Number(fcp_avg) < 1.8 ? 'Good 🟢' : Number(fcp_avg) < 3 ? 'Needs Improvement 🟠' : 'Poor 🔴';
+          const cls_avg_score = isNaN(Number(cls_avg)) ? '⚫️     ' : Number(cls_avg) < 0.1 ? 'Good 🟢' : Number(cls_avg) < 0.25 ? 'Needs Improvement 🟠' : 'Poor 🔴';
+          const lcp_avg_score = isNaN(Number(lcp_avg)) ? '⚫️     ' : Number(lcp_avg) < 2.5 ? 'Good 🟢' : Number(lcp_avg) < 4 ? 'Needs Improvement 🟠' : 'Poor 🔴';
+          const fid_avg_score = isNaN(Number(fid_avg)) ? '⚫️     ' : Number(fid_avg) < 1 ? 'Good 🟢' : Number(fid_avg) < 3 ? 'Needs Improvement 🟠' : 'Poor 🔴';
+          const ttfb_avg_score = isNaN(Number(ttfb_avg)) ? '⚫️     ' : Number(ttfb_avg) < 0.6 ? 'Good 🟢' : 'Poor 🔴';
 
           const fcp_link = 'https://web.dev/fcp/ ';
           const cls_link = 'https://web.dev/cls/ ';
@@ -113,15 +113,15 @@ export async function activate(context: vscode.ExtensionContext) {
           const fid_link = 'https://web.dev/fid/ ';
           const ttfb_link = 'https://web.dev/time-to-first-byte/ ';
           const helpFixScore = `Want to improve "poor" areas?: ${fcp_score === 'Poor 🔴' ? fcp_link : ""}${cls_score === 'Poor 🔴' ? cls_link : ""}${fid_score === 'Poor 🔴' ? fid_link : ""}${lcp_score === 'Poor 🔴' ? lcp_link : ""}${ttfb_score === 'Poor 🔴' ? ttfb_link : ""}`;   
-          const metricOutput = `-------------------------------
-Metric | Value   | Average
--------------------------------
-FCP:   | ${fcp + 's'}${' '.repeat(7 - fcp.length)} ${fcp_score}  | ${fcp_avg}
-CLS:   | ${cls}${' '.repeat(8 - cls.length)} ${cls_score}  | ${cls_avg}
-LCP:   | ${lcp + 's'}${' '.repeat(7 - lcp.length)} ${lcp_score}  | ${lcp_avg}
-FID:   | ${fid + 's'}${' '.repeat(7 - fid.length)} ${fid_score}  | ${fid_avg}
-TTFB:  | ${ttfb + 's'}${' '.repeat(7 - ttfb.length)} ${ttfb_score}  | ${ttfb_avg}
--------------------------------\n`;
+          const metricOutput = `----------------------------------------
+Metric | Value            | Average
+----------------------------------------
+FCP:   | ${fcp + 's'}${' '.repeat(5 - fcp.length)} ${fcp_score}  | ${fcp_avg} ${fcp_avg_score}
+CLS:   | ${cls}${' '.repeat(6 - cls.length)} ${cls_score}  | ${cls_avg} ${cls_avg_score}
+LCP:   | ${lcp + 's'}${' '.repeat(5 - lcp.length)} ${lcp_score}  | ${lcp_avg} ${lcp_avg_score}
+FID:   | ${fid + 's'}${' '.repeat(5 - fid.length)} ${fid_score}  | ${fid_avg} ${fid_avg_score}
+TTFB:  | ${ttfb + 's'}${' '.repeat(5 - ttfb.length)} ${ttfb_score}  | ${ttfb_avg} ${ttfb_avg_score}
+----------------------------------------\n`;
           output.clear();
           output.show();
           output.appendLine(metricOutput);
