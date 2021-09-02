@@ -35,7 +35,7 @@ export async function activate(context: vscode.ExtensionContext) {
   const rootFolderPath = vscode.workspace.workspaceFolders[0].uri.path;
 
   // this gives us the fileName - we join the root folder URI with the file we are looking for, which is metrics.json
-  const fileName = path.join(rootFolderPath, '/metrics.json');
+  const fileName = path.join(rootFolderPath, '/NextStepMetrics.json');
 
   const generateMetrics = vscode.commands.registerCommand(
     'extension.generateMetrics',
@@ -66,23 +66,21 @@ export async function activate(context: vscode.ExtensionContext) {
             .then((document) => {
               return document.getText();
             });
-          // await vscode.workspace.onDidOpenTextDocument((document) => {
-          //   return document.getText();
-          // });
+
           const { metrics , logs } = JSON.parse(metricData);
-          const sum = { FCP: [], LCP: [], TTFB: [], CLS: [], FID: []};
+          const sum = { FCP: Array(), LCP: Array(), TTFB: Array(), CLS: Array(), FID: Array()};
+          let val: keyof typeof sum;
           for (let i = 0; i < logs.length; i++) {
             
-            for(let v of Object.keys(sum)) {
-              if (logs[i][v] !== undefined) sum[v].push(logs[i][v]);
+            for(val in sum) {
+              if (logs[i][val] !== undefined) sum[val].push(logs[i][val]);
             }
           }
-          console.log("sum is: ", sum);
           const avg = {FCP: 0, CLS: 0, LCP: 0, FID: 0, TTFB: 0};
-          for (let [key, arr] of Object.entries(sum)) {
-            avg[key] = arr.reduce((a, c) => a + c)/arr.length;
+          for (val in sum) {
+            const arr = sum[val];
+            if (arr.length) avg[val] = arr.reduce((a, c) => a + c)/arr.length;
           }
-          console.log("avg is: ", avg);
 
           const fcp = (metrics.FCP / 1000).toFixed(2);
           const cls = metrics.CLS.toFixed(2);
@@ -90,22 +88,22 @@ export async function activate(context: vscode.ExtensionContext) {
           const fid = metrics.FID ? (metrics.FID / 1000).toFixed(2) : 'N/A';
           const hydration = (metrics['Next.js-hydration'] / 1000).toFixed(2);
           const ttfb = (metrics.TTFB / 1000).toFixed(2);
-          const fcp_score = isNaN(Number(fcp)) ? '⚫️' : Number(fcp) < 1.8 ? 'Good 🟢' : Number(fcp) < 3 ? 'Needs Improvement 🟠' : 'Poor 🔴';
-          const cls_score = isNaN(Number(cls)) ? '⚫️' : Number(cls) < 0.1 ? 'Good 🟢' : Number(cls) < 0.25 ? 'Needs Improvement 🟠' : 'Poor 🔴';
-          const lcp_score = isNaN(Number(lcp)) ? '⚫️' : Number(lcp) < 2.5 ? 'Good 🟢' : Number(lcp) < 4 ? 'Needs Improvement 🟠' : 'Poor 🔴';
-          const fid_score = isNaN(Number(fid)) ? '⚫️' : Number(fid) < 1 ? 'Good 🟢' : Number(fid) < 3 ? 'Needs Improvement 🟠' : 'Poor 🔴';
-          const ttfb_score = isNaN(Number(ttfb)) ? '⚫️' : Number(ttfb) < 0.6 ? 'Good 🟢' : 'Poor 🔴';
+          const fcp_score = isNaN(Number(fcp)) ? 'None ⚫️' : Number(fcp) < 1.8 ? 'Good 🟢' : Number(fcp) < 3 ? 'Okay 🟠' : 'Poor 🔴';
+          const cls_score = isNaN(Number(cls)) ? 'None ⚫️' : Number(cls) < 0.1 ? 'Good 🟢' : Number(cls) < 0.25 ? 'Okay 🟠' : 'Poor 🔴';
+          const lcp_score = isNaN(Number(lcp)) ? 'None ⚫️' : Number(lcp) < 2.5 ? 'Good 🟢' : Number(lcp) < 4 ? 'Okay 🟠' : 'Poor 🔴';
+          const fid_score = isNaN(Number(fid)) ? 'None ⚫️' : Number(fid) < 1 ? 'Good 🟢' : Number(fid) < 3 ? 'Okay 🟠' : 'Poor 🔴';
+          const ttfb_score = isNaN(Number(ttfb)) ? 'None ⚫️' : Number(ttfb) < 0.6 ? 'Good 🟢' : 'Poor 🔴';
 
           const fcp_avg = (avg.FCP / 1000).toFixed(2);
           const cls_avg = avg.CLS.toFixed(2);
           const lcp_avg = (avg.LCP / 1000).toFixed(2);
           const fid_avg = avg.FID ? (avg.FID / 1000).toFixed(2) : 'N/A';
           const ttfb_avg = (avg.TTFB / 1000).toFixed(2);
-          const fcp_avg_score = isNaN(Number(fcp_avg)) ? '⚫️' : Number(fcp_avg) < 1.8 ? 'Good 🟢' : Number(fcp_avg) < 3 ? 'Needs Improvement 🟠' : 'Poor 🔴';
-          const cls_avg_score = isNaN(Number(cls_avg)) ? '⚫️' : Number(cls_avg) < 0.1 ? 'Good 🟢' : Number(cls_avg) < 0.25 ? 'Needs Improvement 🟠' : 'Poor 🔴';
-          const lcp_avg_score = isNaN(Number(lcp_avg)) ? '⚫️' : Number(lcp_avg) < 2.5 ? 'Good 🟢' : Number(lcp_avg) < 4 ? 'Needs Improvement 🟠' : 'Poor 🔴';
-          const fid_avg_score = isNaN(Number(fid_avg)) ? '⚫️' : Number(fid_avg) < 1 ? 'Good 🟢' : Number(fid_avg) < 3 ? 'Needs Improvement 🟠' : 'Poor 🔴';
-          const ttfb_avg_score = isNaN(Number(ttfb_avg)) ? '⚫️' : Number(ttfb_avg) < 0.6 ? 'Good 🟢' : 'Poor 🔴';
+          const fcp_avg_score = isNaN(Number(fcp_avg)) ? 'None ⚫️' : Number(fcp_avg) < 1.8 ? 'Good 🟢' : Number(fcp_avg) < 3 ? 'Okay 🟠' : 'Poor 🔴';
+          const cls_avg_score = isNaN(Number(cls_avg)) ? 'None ⚫️' : Number(cls_avg) < 0.1 ? 'Good 🟢' : Number(cls_avg) < 0.25 ? 'Okay 🟠' : 'Poor 🔴';
+          const lcp_avg_score = isNaN(Number(lcp_avg)) ? 'None ⚫️' : Number(lcp_avg) < 2.5 ? 'Good 🟢' : Number(lcp_avg) < 4 ? 'Okay 🟠' : 'Poor 🔴';
+          const fid_avg_score = isNaN(Number(fid_avg)) ? 'None ⚫️' : Number(fid_avg) < 1 ? 'Good 🟢' : Number(fid_avg) < 3 ? 'Okay 🟠' : 'Poor 🔴';
+          const ttfb_avg_score = isNaN(Number(ttfb_avg)) ? 'None ⚫️' : Number(ttfb_avg) < 0.6 ? 'Good 🟢' : 'Poor 🔴';
 
           const fcp_link = 'https://web.dev/fcp/ ';
           const cls_link = 'https://web.dev/cls/ ';
