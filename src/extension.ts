@@ -4,32 +4,25 @@ const path = require('path');
 let toggle = false;
 
 export const setupExtension = () => {
-  const nsPlus = vscode.window.createStatusBarItem(
+  const nsButton = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Left,
     0
   );
 
-  const nsMinus = vscode.window.createStatusBarItem(
-    vscode.StatusBarAlignment.Left,
-    0
-  );
-  nsPlus.command = 'extension.generateMetrics';
-  nsPlus.text = 'NS+';
+  nsButton.command = 'extension.generateMetrics';
+  nsButton.text = 'NextStep: OFF🔴';
 
-  nsMinus.command = 'extension.stopListening';
-  nsMinus.text = 'NS-';
+  nsButton.show();
 
-  nsPlus.show();
-  nsMinus.show();
+  return nsButton;
 };
-
 
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
   console.log('Congratulations, your extension "Next Step" is now active!');
-  setupExtension();
+  const nsButton = setupExtension();
 
   const output = vscode.window.createOutputChannel('METRICS');
   // this is getting the application's root folder filepath string from its uri
@@ -37,38 +30,51 @@ export async function activate(context: vscode.ExtensionContext) {
     return;
   }
 
+  const rootFolderURI = vscode.workspace.workspaceFolders[0].uri;
   const rootFolderPath = vscode.workspace.workspaceFolders[0].uri.path;
-  // const vscode.workspace.workspaceFolders: readonly vscode.WorkspaceFolder[] | undefined;
+
   // this gives us the fileName - we join the root folder URI with the file we are looking for, which is metrics.json
   const fileName = path.join(rootFolderPath, '/NextStepMetrics.json');
-
 
   const generateMetrics = vscode.commands.registerCommand(
     'extension.generateMetrics',
     async () => {
       console.log('Succesfully entered registerCommand');
       toggle = true;
+      nsButton.command = 'extension.stopListening';
+      nsButton.text = 'NextStep: ON🟢';
+      output.clear();
+      output.show();
+      output.appendLine('NextStep is active');
+
+      // name the command to be called on any file in the application
+      // this parses our fileName to an URI - we need to do this for when we run openTextDocument below
+      const fileUri = vscode.Uri.parse(fileName);
+      vscode.workspace.openTextDocument(fileUri);
+      
       vscode.workspace.onDidChangeTextDocument(async (e) => {
-        
+        // name the command to be called on any file in the application
+        // this parses our fileName to an URI - we need to do this for when we run openTextDocument below
+
         if (toggle) {
           console.log('Succesfully entered onDidChangeTextDocument');
         if (e.document.uri.path === fileName) {
-          // name the command to be called on any file in the application
-          // this parses our fileName to an URI - we need to do this for when we run openTextDocument below
-          const fileUri = vscode.Uri.parse(fileName);
           // open the file at the Uri path and get the text
           const metricData = await vscode.workspace
             .openTextDocument(fileUri)
             .then((document) => {
               return document.getText();
             });
+          // await vscode.workspace.onDidOpenTextDocument((document) => {
+          //   return document.getText();
+          // });
           const parsedMetricData = JSON.parse(metricData);
-          const fcp = (parsedMetricData.metrics[0]['FCP'] / 1000).toFixed(2);
-          const cls = parsedMetricData.metrics[0]['CLS'].toFixed(2);
-          const lcp = (parsedMetricData.metrics[0]['LCP'] / 1000).toFixed(2);
-          const fid = (parsedMetricData.metrics[0]['FID'] / 1000).toFixed(2);
-          const hydration = (parsedMetricData.metrics[0]['Next.js-hydration'] / 1000).toFixed(2);
-          const ttfb = (parsedMetricData.metrics[0]['TTFB'] / 1000).toFixed(2);
+          const fcp = (parsedMetricData.metrics['FCP'] / 1000).toFixed(2);
+          const cls = parsedMetricData.metrics['CLS'].toFixed(2);
+          const lcp = (parsedMetricData.metrics['LCP'] / 1000).toFixed(2);
+          const fid = (parsedMetricData.metrics['FID'] / 1000).toFixed(2);
+          const hydration = (parsedMetricData.metrics['Next.js-hydration'] / 1000).toFixed(2);
+          const ttfb = (parsedMetricData.metrics['TTFB'] / 1000).toFixed(2);
           const fcp_score = isNaN(Number(fcp)) ? '⚫️' : Number(fcp) < 1.8 ? 'Good 🟢' : Number(fcp) < 3 ? 'Moderate 🟠' : 'Poor 🔴';
           const cls_score = isNaN(Number(cls)) ? '⚫️' : Number(cls) < 0.1 ? 'Good 🟢' : Number(cls) < 0.25 ? 'Moderate 🟠' : 'Poor 🔴';
           const lcp_score = isNaN(Number(lcp)) ? '⚫️' : Number(lcp) < 2.5 ? 'Good 🟢' : Number(lcp) < 4 ? 'Moderate 🟠' : 'Poor 🔴';
@@ -104,6 +110,8 @@ TTFB:  ${ttfb + 's'}${' '.repeat(7 - ttfb.length)}${ttfb_score}\n`;
     'extension.stopListening',
     async () => {
       toggle = false;
+      nsButton.command = 'extension.generateMetrics';
+      nsButton.text = 'NextStep: OFF🔴';
       output.clear();
       // write functionality to stop displaying Metrics
       console.log('Successfully entered extension.stopListening');
