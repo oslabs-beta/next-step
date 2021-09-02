@@ -58,6 +58,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
         if (toggle) {
           console.log('Succesfully entered onDidChangeTextDocument');
+          console.log("document path",e.document.uri.path)
         if (e.document.uri.path === fileName) {
           // open the file at the Uri path and get the text
           const metricData = await vscode.workspace
@@ -69,12 +70,12 @@ export async function activate(context: vscode.ExtensionContext) {
           //   return document.getText();
           // });
           const parsedMetricData = JSON.parse(metricData);
-          const fcp = (parsedMetricData.metrics['FCP'] / 1000).toFixed(2);
-          const cls = parsedMetricData.metrics['CLS'].toFixed(2);
-          const lcp = (parsedMetricData.metrics['LCP'] / 1000).toFixed(2);
-          const fid = (parsedMetricData.metrics['FID'] / 1000).toFixed(2);
-          const hydration = (parsedMetricData.metrics['Next.js-hydration'] / 1000).toFixed(2);
-          const ttfb = (parsedMetricData.metrics['TTFB'] / 1000).toFixed(2);
+          const fcp = (parsedMetricData.metrics[0]['FCP'] / 1000).toFixed(2);
+          const cls = parsedMetricData.metrics[0]['CLS'].toFixed(2);
+          const lcp = (parsedMetricData.metrics[0]['LCP'] / 1000).toFixed(2);
+          const fid = (parsedMetricData.metrics[0]['FID'] / 1000).toFixed(2);
+          const hydration = (parsedMetricData.metrics[0]['Next.js-hydration'] / 1000).toFixed(2);
+          const ttfb = (parsedMetricData.metrics[0]['TTFB'] / 1000).toFixed(2);
           const fcp_score = isNaN(Number(fcp)) ? '⚫️' : Number(fcp) < 1.8 ? 'Good 🟢' : Number(fcp) < 3 ? 'Moderate 🟠' : 'Poor 🔴';
           const cls_score = isNaN(Number(cls)) ? '⚫️' : Number(cls) < 0.1 ? 'Good 🟢' : Number(cls) < 0.25 ? 'Moderate 🟠' : 'Poor 🔴';
           const lcp_score = isNaN(Number(lcp)) ? '⚫️' : Number(lcp) < 2.5 ? 'Good 🟢' : Number(lcp) < 4 ? 'Moderate 🟠' : 'Poor 🔴';
@@ -92,9 +93,9 @@ CLS:   ${cls}${' '.repeat(8 - cls.length)}${cls_score}
 LCP:   ${lcp + 's'}${' '.repeat(7 - lcp.length)}${lcp_score}
 FID:   ${isNaN(Number(fid)) ? 'n/a' : fid + 's'}${' '.repeat(7 - fid.length)}${fid_score}
 TTFB:  ${ttfb + 's'}${' '.repeat(7 - ttfb.length)}${ttfb_score}\n`;
-
           output.clear();
           output.show();
+          output.appendLine('testing');
           output.appendLine(metricOutput);
           output.appendLine(helpFixScore);
         }
