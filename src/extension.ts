@@ -40,7 +40,7 @@ export async function activate(context: vscode.ExtensionContext) {
   const rootFolderPath = vscode.workspace.workspaceFolders[0].uri.path;
   // const vscode.workspace.workspaceFolders: readonly vscode.WorkspaceFolder[] | undefined;
   // this gives us the fileName - we join the root folder URI with the file we are looking for, which is metrics.json
-  const fileName = path.join(rootFolderPath, '/metrics.json');
+  const fileName = path.join(rootFolderPath, '/NextStepMetrics.json');
 
 
   const generateMetrics = vscode.commands.registerCommand(
