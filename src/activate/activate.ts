@@ -20,9 +20,9 @@ async function activate(context: vscode.ExtensionContext) {
     return;
   }
 
-  // this gives us the fileName - we join the root folder URI with the file we are looking for, which is metrics.json
+  // this gives us the fileName - we join the root folder URI with the file we are looking for, which is in node modules
   const rootFolderPath = vscode.workspace.workspaceFolders[0].uri.path;
-  const fileName = path.join(rootFolderPath, '/next-step-metrics.json');
+  const fileName = path.join(rootFolderPath, '/node_modules/next-step-metrics/next-step-metrics.json');
 
   // turn the extension on to start listening and generating metrics
   const generateMetrics = vscode.commands.registerCommand(

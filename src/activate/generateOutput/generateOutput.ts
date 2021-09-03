@@ -6,20 +6,27 @@ export const generateOutput = (metricData: string, output: vscode.OutputChannel)
   // get variables
   const { metrics , logs } = JSON.parse(metricData);
 
+  const metricList = { 
+    firstContentfulPaint: 'FCP', 
+    cumulativeLayoutShift: 'CLS', 
+    largestContentfulPaint: 'LCP', 
+    firstInputDelay: 'FID',
+    timeToFirstByte: 'TTFB', 
+  };
+  let metricName: keyof typeof metricList;
+
   // store metricStore of values by metric
   const metricStore = { 
     firstContentfulPaint: Array(), 
-    largestContentfulPaint: Array(), 
-    timeToFirstByte: Array(), 
     cumulativeLayoutShift: Array(), 
+    largestContentfulPaint: Array(), 
     firstInputDelay: Array(),
+    timeToFirstByte: Array(), 
   };
-  
-  let metricName: keyof typeof metricStore;
 
   for (let i = 0; i < logs.length; i++) {
     for(metricName in metricStore) {
-      if (logs[i][metricName] !== undefined) {metricStore[metricName].push(logs[i][metricName])};
+      if (logs[i][metricList[metricName]] !== undefined) {metricStore[metricName].push(logs[i][metricList[metricName]])};
     }
   }
 
@@ -33,7 +40,7 @@ export const generateOutput = (metricData: string, output: vscode.OutputChannel)
   };
   
   // calculate average per metric
-
+  console.log(metricStore);
   // TODO: ignore empties
   for (metricName in metricStore) {
     const arr = metricStore[metricName]; 
@@ -43,7 +50,7 @@ export const generateOutput = (metricData: string, output: vscode.OutputChannel)
     }
     let sum = 0;
     for (let i = size - 1; i > size - 6; i--){
-      sum+= arr[i];
+      sum += arr[i];
     };
     avgLastFive[metricName] = sum / 5;
   };
@@ -56,11 +63,11 @@ export const generateOutput = (metricData: string, output: vscode.OutputChannel)
   const ttfb = metrics.TTFB ? (metrics.TTFB / 1000).toFixed(2) : 'N/A';
   
   // compare values to google benchmarks to provide score
-  const fcpScore = isNaN(Number(fcp)) ? 'None ⚫️' : Number(fcp) < 1.8 ? 'Good 🟢' : Number(fcp) < 3 ? 'Okay 🟠' : 'Poor 🔴';
-  const clsScore = isNaN(Number(cls)) ? 'None ⚫️' : Number(cls) < 0.1 ? 'Good 🟢' : Number(cls) < 0.25 ? 'Okay 🟠' : 'Poor 🔴';
-  const lcpScore = isNaN(Number(lcp)) ? 'None ⚫️' : Number(lcp) < 2.5 ? 'Good 🟢' : Number(lcp) < 4 ? 'Okay 🟠' : 'Poor 🔴';
-  const fidScore = isNaN(Number(fid)) ? 'None ⚫️' : Number(fid) < 1 ? 'Good 🟢' : Number(fid) < 3 ? 'Okay 🟠' : 'Poor 🔴';
-  const ttfbScore = isNaN(Number(ttfb)) ? 'None ⚫️' : Number(ttfb) < 0.6 ? 'Good 🟢' : 'Poor 🔴';
+  const fcpScore = isNaN(Number(fcp)) ? 'N/A  ⚫️' : Number(fcp) < 1.8 ? 'Good 🟢' : Number(fcp) < 3 ? 'Okay 🟠' : 'Poor 🔴';
+  const clsScore = isNaN(Number(cls)) ? 'N/A  ⚫️' : Number(cls) < 0.1 ? 'Good 🟢' : Number(cls) < 0.25 ? 'Okay 🟠' : 'Poor 🔴';
+  const lcpScore = isNaN(Number(lcp)) ? 'N/A  ⚫️' : Number(lcp) < 2.5 ? 'Good 🟢' : Number(lcp) < 4 ? 'Okay 🟠' : 'Poor 🔴';
+  const fidScore = isNaN(Number(fid)) ? 'N/A  ⚫️' : Number(fid) < 1 ? 'Good 🟢' : Number(fid) < 3 ? 'Okay 🟠' : 'Poor 🔴';
+  const ttfbScore = isNaN(Number(ttfb)) ? 'N/A  ⚫️' : Number(ttfb) < 0.6 ? 'Good 🟢' : 'Poor 🔴';
   
   // round average values
   const fcpAvg = avgLastFive.firstContentfulPaint ? (avgLastFive.firstContentfulPaint / 1000).toFixed(2) : 'N/A';
@@ -68,11 +75,11 @@ export const generateOutput = (metricData: string, output: vscode.OutputChannel)
   const lcpAvg = avgLastFive.largestContentfulPaint ? (avgLastFive.largestContentfulPaint / 1000).toFixed(2) : 'N/A';
   const fidAvg = avgLastFive.firstInputDelay ? (avgLastFive.firstInputDelay / 1000).toFixed(2) : 'N/A';
   const ttfbAvg = avgLastFive.timeToFirstByte ? (avgLastFive.timeToFirstByte / 1000).toFixed(2) : 'N/A';
-  const fcpAvgScore = isNaN(Number(fcpAvg)) ? 'None ⚫️' : Number(fcpAvg) < 1.8 ? 'Good 🟢' : Number(fcpAvg) < 3 ? 'Okay 🟠' : 'Poor 🔴';
-  const clsAvgScore = isNaN(Number(clsAvg)) ? 'None ⚫️' : Number(clsAvg) < 0.1 ? 'Good 🟢' : Number(clsAvg) < 0.25 ? 'Okay 🟠' : 'Poor 🔴';
-  const lcpAvgScore = isNaN(Number(lcpAvg)) ? 'None ⚫️' : Number(lcpAvg) < 2.5 ? 'Good 🟢' : Number(lcpAvg) < 4 ? 'Okay 🟠' : 'Poor 🔴';
-  const fidAvgScore = isNaN(Number(fidAvg)) ? 'None ⚫️' : Number(fidAvg) < 1 ? 'Good 🟢' : Number(fidAvg) < 3 ? 'Okay 🟠' : 'Poor 🔴';
-  const ttfbAvgScore = isNaN(Number(ttfbAvg)) ? 'None ⚫️' : Number(ttfbAvg) < 0.6 ? 'Good 🟢' : 'Poor 🔴';
+  const fcpAvgScore = isNaN(Number(fcpAvg)) ? 'N/A  ⚫️' : Number(fcpAvg) < 1.8 ? 'Good 🟢' : Number(fcpAvg) < 3 ? 'Okay 🟠' : 'Poor 🔴';
+  const clsAvgScore = isNaN(Number(clsAvg)) ? 'N/A  ⚫️' : Number(clsAvg) < 0.1 ? 'Good 🟢' : Number(clsAvg) < 0.25 ? 'Okay 🟠' : 'Poor 🔴';
+  const lcpAvgScore = isNaN(Number(lcpAvg)) ? 'N/A  ⚫️' : Number(lcpAvg) < 2.5 ? 'Good 🟢' : Number(lcpAvg) < 4 ? 'Okay 🟠' : 'Poor 🔴';
+  const fidAvgScore = isNaN(Number(fidAvg)) ? 'N/A  ⚫️' : Number(fidAvg) < 1 ? 'Good 🟢' : Number(fidAvg) < 3 ? 'Okay 🟠' : 'Poor 🔴';
+  const ttfbAvgScore = isNaN(Number(ttfbAvg)) ? 'N/A  ⚫️' : Number(ttfbAvg) < 0.6 ? 'Good 🟢' : 'Poor 🔴';
 
   // links for more details on each metric
   const fcpLink = 'https://web.dev/fcp/ ';
@@ -84,7 +91,7 @@ export const generateOutput = (metricData: string, output: vscode.OutputChannel)
   
   // format table of output panel
   const metricOutput = `--------------------------------------------
-  Metric | Value          | Average (Last 5)
+  Metric | Value           | Average (Last 5)
   --------------------------------------------
   FCP:   | ${fcp + 's'}${' '.repeat(5 - fcp.length)} ${fcpScore}  | ${fcpAvg} ${fcpAvgScore}
   CLS:   | ${cls}${' '.repeat(6 - cls.length)} ${clsScore}  | ${clsAvg} ${clsAvgScore}
