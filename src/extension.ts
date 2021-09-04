@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { AsyncLocalStorage } from 'async_hooks';
 import * as vscode from 'vscode';
 import { getVSCodeDownloadUrl } from 'vscode-test/out/util';
@@ -151,3 +152,7 @@ TTFB:  | ${ttfb + 's'}${' '.repeat(7 - ttfb.length)} ${ttfb_score}  | ${ttfb_avg
 export function deactivate() {
   console.log('entered deactivate block');
 }
+=======
+export { default as activate } from './activate/activate';
+export { default as deactivate } from './deactivate/deactivate';
+>>>>>>> 0dd13ffdc85843cf136f12e3a500d0c91cfff41a
