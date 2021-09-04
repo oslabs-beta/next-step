@@ -1,23 +1,31 @@
 {
-  "name": "helloworld",
-  "displayName": "Hello World Test",
+  "name": "nextstep",
+  "displayName": "Next Step",
+  "publisher": "NextStep",
   "description": "",
   "version": "0.0.1",
   "engines": {
-    "vscode": "1.59.0"
+    "vscode": "^1.59.0"
   },
   "categories": [
     "Other"
   ],
   "activationEvents": [
-    "onCommand:extension.generateMetrics"
+    "onCommand:extension.generateMetrics",
+    "onCommand:extension.stopListening",
+    "onStartupFinished",
+    "workspaceContains: "
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
         "command": "extension.generateMetrics",
-        "title": "Generate NextJS Vitals"
+        "title": "Generate NextJS Metrics"
+      },
+      {
+        "command": "extension.stopListening",
+        "title": "Deactivate NextJS Metrics"
       }
     ]
   },
