@@ -16,6 +16,7 @@
         "no-throw-literal": "warn",
         "semi": "off"
     },
+    "noInlineConfig": true,
     "ignorePatterns": [
         "out",
         "dist",
