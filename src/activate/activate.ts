@@ -36,8 +36,7 @@ async function activate(context: vscode.ExtensionContext) {
       nextStepButton.text = 'NextStep: ON';
       output.clear();
       output.show();
-      output.appendLine('NextStep is active');
-
+      output.appendLine('NextStep (v1.1.0) is running');
       // name the command to be called on any file in the application
       // this parses our fileName to an URI - we need to do this for when we run openTextDocument below
       const fileUri = vscode.Uri.parse(fileName);
