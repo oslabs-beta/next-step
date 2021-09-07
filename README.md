@@ -21,7 +21,7 @@ NextStep provides Next.js developers the ability to understand the performance i
 
 These two tools work together to automatically calculate web performance scores upon any refresh of a developer's Next.js application, including browser refreshes as well as hot reloading from within the IDE.  
 
-![status_bar](./docs/assets/images/status_bar.png)
+![status_bar](./docs/assets/images/statusbar.png)
 
 NextStep Extension provides a button in the Visual Studio Code Status Bar. When active, each refresh of the developer's app will generate a table in the Output panel of VS code displaying the latest metrics, along with the moving average of the previous 5 refreshes. 
 
@@ -55,7 +55,7 @@ The NextStep NPM Package imports the functionality to monitor the developer's Ne
     
 ## <a name="usage"></a>Usage
 
-![status_off](./docs/assets/images/status_off.png)
+![status_off](./docs/assets/images/statusbar_off.png)
 
 - <b>"NextStep: ON"</b> indicates that NextStep will capture any changes to the Next.js application's calculated Web Vitals metrics. More information on Google's definitions and benchmarks for Web Vitals can be found here.
 - <b>"NextStep: OFF"</b> indicates that NextStep is not active and will not poll for changes. 
