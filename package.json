@@ -7,6 +7,7 @@
   "engines": {
     "vscode": "^1.59.0"
   },
+  "repository": "https://github.com/oslabs-beta/next-step.git",
   "categories": [
     "Other"
   ],

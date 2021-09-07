@@ -13,6 +13,7 @@ export const generateOutput = (metricData: string, output: vscode.OutputChannel)
     firstInputDelay: 'FID',
     timeToFirstByte: 'TTFB', 
   };
+
   let metricName: keyof typeof metricList;
 
   // store metricStore of values by metric
@@ -90,24 +91,28 @@ export const generateOutput = (metricData: string, output: vscode.OutputChannel)
   const lcpLink = 'https://web.dev/lcp/ ';
   const fidLink = 'https://web.dev/fid/ ';
   const ttfbLink = 'https://web.dev/time-to-first-byte/ ';
-  const helpFixScore = `Want to improve "poor" areas?: ${fcpScore === 'Poor 🔴' ? fcpLink : ""}${clsScore === 'Poor 🔴' ? clsLink : ""}${fidScore === 'Poor 🔴' ? fidLink : ""}${lcpScore === 'Poor 🔴' ? lcpLink : ""}${ttfbScore === 'Poor 🔴' ? ttfbLink : ""}`;   
   
   // format table of output panel
   const metricOutput = `--------------------------------------------
- Metric | Value           | Average (Last 5)
- --------------------------------------------
- FCP:   | ${fcp + 's'}${' '.repeat(5 - fcp.length)} ${fcpScore}  | ${fcpAvg + 's'}${' '.repeat(5 - fcpAvg.length)} ${fcpAvgScore}
- CLS:   | ${cls}${' '.repeat(6 - cls.length)} ${clsScore}  | ${clsAvg}${' '.repeat(6 - clsAvg.length)} ${clsAvgScore}
- LCP:   | ${lcp + 's'}${' '.repeat(5 - lcp.length)} ${lcpScore}  | ${lcpAvg + 's'}${' '.repeat(5 - lcpAvg.length)} ${lcpAvgScore}
- FID:   | ${fid + 's'}${' '.repeat(5 - fid.length)} ${fidScore}  | ${fidAvg + 's'}${' '.repeat(5 - fidAvg.length)} ${fidAvgScore}
- TTFB:  | ${ttfb + 's'}${' '.repeat(5 - ttfb.length)} ${ttfbScore}  | ${ttfbAvg + 's'}${' '.repeat(5 - ttfbAvg.length)} ${ttfbAvgScore}
- --------------------------------------------\n`;
+Metric | Value           | Average (Last 5)
+--------------------------------------------
+FCP:   | ${fcp + 's'}${' '.repeat(5 - fcp.length)} ${fcpScore}  | ${fcpAvg + 's'}${' '.repeat(5 - fcpAvg.length)} ${fcpAvgScore}
+CLS:   | ${cls}${' '.repeat(6 - cls.length)} ${clsScore}  | ${clsAvg}${' '.repeat(6 - clsAvg.length)} ${clsAvgScore}
+LCP:   | ${lcp + 's'}${' '.repeat(5 - lcp.length)} ${lcpScore}  | ${lcpAvg + 's'}${' '.repeat(5 - lcpAvg.length)} ${lcpAvgScore}
+FID:   | ${fid + 's'}${' '.repeat(5 - fid.length)} ${fidScore}  | ${fidAvg + 's'}${' '.repeat(5 - fidAvg.length)} ${fidAvgScore}
+TTFB:  | ${ttfb + 's'}${' '.repeat(5 - ttfb.length)} ${ttfbScore}  | ${ttfbAvg + 's'}${' '.repeat(5 - ttfbAvg.length)} ${ttfbAvgScore}
+--------------------------------------------\n`;
 
   // display in output panel
   output.clear();
   output.show();
-  output.appendLine('testing');
   output.appendLine(metricOutput);
-  output.appendLine(helpFixScore);
 
+  // output links for any "poor" metric
+  const poorScores = [[fcpScore, fcpLink], [clsScore, clsLink], [lcpScore, lcpLink], [fidScore, fidLink], [ttfbScore, ttfbLink]].filter(score => (score[0] === 'Poor 🔴' || score[0] === 'Fair 🟠'));
+  if (poorScores.length) {
+    let helpFixScore = 'Want to improve "poor" areas?: ';
+    poorScores.forEach(score => helpFixScore += score[1]);
+    output.appendLine(helpFixScore);
+  }
 };
