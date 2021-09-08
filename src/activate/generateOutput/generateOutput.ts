@@ -27,9 +27,11 @@ export const generateOutput = (metricData: string, output: vscode.OutputChannel)
 
   for (let i = 0; i < logs.length; i++) {
     for(metricName in metricStore) {
-      if (logs[i][metricList[metricName]] !== undefined) {metricStore[metricName].push(logs[i][metricList[metricName]])};
-    }
-  }
+      if (logs[i][metricList[metricName]] !== undefined) {
+        metricStore[metricName].push(logs[i][metricList[metricName]]);
+      };
+    };
+  };
 
   // store average of last five values
   const avgLastFive = {
@@ -56,7 +58,7 @@ export const generateOutput = (metricData: string, output: vscode.OutputChannel)
         sum += arr[i];
       };
       avgLastFive[metricName] = sum / 5;
-    }
+    };
   };
 
   // round values to seconds
@@ -114,5 +116,5 @@ TTFB:  | ${ttfb + 's'}${' '.repeat(5 - ttfb.length)} ${ttfbScore}  | ${ttfbAvg +
     let helpFixScore = 'Want to improve "poor" areas?: ';
     poorScores.forEach(score => helpFixScore += score[1]);
     output.appendLine(helpFixScore);
-  }
+  };
 };
