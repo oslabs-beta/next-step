@@ -1,6 +1,6 @@
 # NextStep
 
-![Version](https://img.shields.io/visual-studio-marketplace/v/NextStep.nextstep) ![Size](https://img.shields.io/github/languages/code-size/figstack/NextStep.nextstep) ![Ratings](https://img.shields.io/visual-studio-marketplace/r/NextStep.nextstep)
+![Version](https://img.shields.io/visual-studio-marketplace/v/NextStep.nextstep) ![Ratings](https://img.shields.io/visual-studio-marketplace/r/NextStep.nextstep)
 
 
 ## Table of Contents
