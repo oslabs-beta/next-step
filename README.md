@@ -74,6 +74,7 @@ The NextStep NPM Package imports the functionality to monitor the developer's Ne
 
 
 Calculated web metrics and their scores are displayed as a table in the Output panel.
+<b> NOTE: </b> FID score will not be recalculated until a user input action is taken on the page. Ie, button click or typed input field.
 
 ![metrics_table](./docs/assets/images/metrics_table.png)
 
