@@ -33,11 +33,10 @@ async function activate(context: vscode.ExtensionContext) {
       // the button shows "Off" when user clicks to turn off extension
       // once the button is clicked, the button will show "Off"
       nextStepButton.command = 'extension.stopListening';
-      nextStepButton.text = 'NextStep: ON🟢';
+      nextStepButton.text = 'NextStep: ON';
       output.clear();
       output.show();
-      output.appendLine('NextStep is active');
-
+      output.appendLine('NextStep (v1.1.0) is running');
       // name the command to be called on any file in the application
       // this parses our fileName to an URI - we need to do this for when we run openTextDocument below
       const fileUri = vscode.Uri.parse(fileName);
@@ -69,7 +68,7 @@ async function activate(context: vscode.ExtensionContext) {
         // the button shows "Off" when user clicks to turn off extension
         // once the button is clicked, the button will show "Off"
         nextStepButton.command = 'extension.generateMetrics';
-        nextStepButton.text = 'NextStep: OFF🔴';
+        nextStepButton.text = 'NextStep: OFF';
         output.clear();
         // write functionality to stop displaying Metrics
         console.log('Successfully entered extension.stopListening');
