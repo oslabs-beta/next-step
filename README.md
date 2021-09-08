@@ -34,26 +34,30 @@ The NextStep NPM Package imports the functionality to monitor the developer's Ne
 ## <a name="getting-started"></a>Getting Started
 1. Download and install the NextStep VS Code Extension from the extensions marketplace. 
 2. Run "npm install next-step-metrics" to install the NextStep Metrics npm package.
-
-		npm install next-step-metrics
-
+    ```
+      npm install next-step-metrics
+    ```
 3. In your project's "next.config.js" file, make sure fs is configured as below:  
-	webpack: (config, { isServer }) => {
-	    if (!isServer) {
-	      config.resolve.fallback.fs = false;
-	    }
-	    return config;
-	},
 
-3. In your Next.js application's <b>"/pages/api"</b> folder add a file called "next-step.js" with the following code: 
-	
-		import nc from "next-connect";
-		import { metrics } from "next-step-metrics";
-		const handler = nc().post((req, res) => {
-		  return metrics(req, res);
-		});
-		export default handler;
-		
+    ```
+    webpack: (config, { isServer }) => {
+      if (!isServer) {
+        config.resolve.fallback.fs = false;
+      }
+      return config;
+    }
+    ```
+
+
+4. In your Next.js application's <b>"/pages/api"</b> folder add a file called "next-step.js" with the following code: 
+    ```
+      import nc from "next-connect";
+      import { metrics } from "next-step-metrics";
+      const handler = nc().post((req, res) => {
+        return metrics(req, res);
+      });
+      export default handler;
+    ```
 4. In your Next.js application's <b>"/pages/_app.js"</b> file wrap your file with the following lines to import and export out 'reportWebVitals'. It is not necessary to import this function anywhere else in your application.
 
     	import { reportWebVitals } from "next-step-metrics";
