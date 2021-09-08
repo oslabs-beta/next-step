@@ -37,6 +37,14 @@ The NextStep NPM Package imports the functionality to monitor the developer's Ne
 
 		npm install next-step-metrics
 
+3. In your project's "next.config.js" file, make sure fs is configured as below:  
+	webpack: (config, { isServer }) => {
+	    if (!isServer) {
+	      config.resolve.fallback.fs = false;
+	    }
+	    return config;
+	},
+
 3. In your Next.js application's <b>"/pages/api"</b> folder add a file called "next-step.js" with the following code: 
 	
 		import nc from "next-connect";
