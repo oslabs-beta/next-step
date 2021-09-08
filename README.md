@@ -80,4 +80,4 @@ NextStep is a tool specifically built for <b>Next.js applications</b>. Other fra
 ##### [Kenny Shen](https://github.com/shenkenny)
 ##### [Simon Yu](https://github.com/SYu449)
 ##### [Lucas Taffo](https://github.com/lucastaffo)
-##### [Gal Horowitz](https://github.com/horovitsg)
+##### [Gal Horovits](https://github.com/horovitsg)
