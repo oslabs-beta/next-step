@@ -21,11 +21,11 @@ NextStep provides Next.js developers the ability to understand the performance i
 
 These two tools work together to automatically calculate web performance scores upon any refresh of a developer's Next.js application, including browser refreshes as well as hot reloading from within the IDE.  
 
-![status_bar](./docs/assets/images/statusbar.png)
+![](https://github.com/oslabs-beta/next-step/blob/dev/docs/assets/images/statusbar.png)
 
 NextStep Extension provides a button in the Visual Studio Code Status Bar. When active, each refresh of the developer's app will generate a table in the Output panel of VS code displaying the latest metrics, along with the moving average of the previous 5 refreshes. 
 
-![metrics_table](./docs/assets/images/metrics_table.png)
+![](https://github.com/oslabs-beta/next-step/blob/dev/docs/assets/images/metrics_table.png)
 
 Each score is compared against Google's benchmark Core Web Vitals which are defined [here](https://web.dev/learn-web-vitals). Any results falling in the "Poor" ranges will direct the user to the Next.js documentation to help identify opportunities for improvement.
 
@@ -55,7 +55,7 @@ The NextStep NPM Package imports the functionality to monitor the developer's Ne
     
 ## <a name="usage"></a>Usage
 
-![status_off](./docs/assets/images/statusbar_off.png)
+![](https://github.com/oslabs-beta/next-step/blob/dev/docs/assets/images/statusbar_off.png)
 
 - <b>"NextStep: ON"</b> indicates that NextStep will capture any changes to the Next.js application's calculated Web Vitals metrics. More information on Google's definitions and benchmarks for Web Vitals can be found here.
 - <b>"NextStep: OFF"</b> indicates that NextStep is not active and will not poll for changes. 
@@ -63,7 +63,7 @@ The NextStep NPM Package imports the functionality to monitor the developer's Ne
 
 Calculated web metrics and their scores are displayed as a table in the Output panel.
 
-![metrics_table](./docs/assets/images/metrics_table.png)
+![](https://github.com/oslabs-beta/next-step/blob/dev/docs/assets/images/metrics_table.png)
 
 ---
 
