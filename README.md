@@ -82,7 +82,7 @@ Calculated web metrics and their scores are displayed as a table in the Output p
 
 ## <a name="additional-information"></a>Additional Information
 You <b>MUST</b> install the [Next Step Metrics NPM Package](https://www.npmjs.com/package/next-step-metrics) to be able to use this extension. The required set up steps and troubleshooting documentation can be found in the README.
-NextStep is a tool specifically built for <b>Next.js applications</b>. Other frameworks are not currently supported. 
+NextStep is a tool specifically built for <b>Next.js applications</b>. Other frameworks are not supported at the moment. 
 
 ## <a name="resources"></a>Resources: 
 - [Marketplace](https://marketplace.visualstudio.com/items?itemName=NextStep.nextstep)
