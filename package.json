@@ -3,7 +3,7 @@
   "displayName": "Next Step",
   "publisher": "NextStep",
   "description": "",
-  "version": "0.1.4",
+  "version": "0.1.6",
   "engines": {
     "vscode": "^1.59.0"
   },
