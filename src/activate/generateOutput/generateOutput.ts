@@ -60,11 +60,11 @@ export const generateOutput = (metricData: string, output: vscode.OutputChannel)
   };
 
   // round values to seconds
-  const fcp = metrics.FCP ? (metrics.FCP / 1000).toFixed(2) : 'N/A';
-  const cls = metrics.CLS ? metrics.CLS.toFixed(2) : 'N/A';
-  const lcp = metrics.LCP ? (metrics.LCP / 1000).toFixed(2) : 'N/A';
-  const fid = metrics.FID ? (metrics.FID / 1000).toFixed(2) : 'N/A';
-  const ttfb = metrics.TTFB ? (metrics.TTFB / 1000).toFixed(2) : 'N/A';
+  const fcp = metrics.FCP !== undefined ? (metrics.FCP / 1000).toFixed(2) : 'N/A';
+  const cls = metrics.CLS !== undefined ? metrics.CLS.toFixed(2) : 'N/A';
+  const lcp = metrics.LCP !== undefined ? (metrics.LCP / 1000).toFixed(2) : 'N/A';
+  const fid = metrics.FID !== undefined ? (metrics.FID / 1000).toFixed(2) : 'N/A';
+  const ttfb = metrics.TTFB !== undefined ? (metrics.TTFB / 1000).toFixed(2) : 'N/A';
   
   // compare values to google benchmarks to provide score
   const fcpScore = isNaN(Number(fcp)) ? 'N/A  ⚫️' : Number(fcp) < 1.8 ? 'Good 🟢' : Number(fcp) < 3 ? 'Fair 🟠' : 'Poor 🔴';
@@ -74,11 +74,11 @@ export const generateOutput = (metricData: string, output: vscode.OutputChannel)
   const ttfbScore = isNaN(Number(ttfb)) ? 'N/A  ⚫️' : Number(ttfb) < 0.6 ? 'Good 🟢' : 'Poor 🔴';
   
   // round average values
-  const fcpAvg = avgLastFive.firstContentfulPaint ? (avgLastFive.firstContentfulPaint / 1000).toFixed(2) : 'N/A';
-  const clsAvg = avgLastFive.cumulativeLayoutShift ? avgLastFive.cumulativeLayoutShift.toFixed(2) : 'N/A';
-  const lcpAvg = avgLastFive.largestContentfulPaint ? (avgLastFive.largestContentfulPaint / 1000).toFixed(2) : 'N/A';
-  const fidAvg = avgLastFive.firstInputDelay ? (avgLastFive.firstInputDelay / 1000).toFixed(2) : 'N/A';
-  const ttfbAvg = avgLastFive.timeToFirstByte ? (avgLastFive.timeToFirstByte / 1000).toFixed(2) : 'N/A';
+  const fcpAvg = avgLastFive.firstContentfulPaint !== undefined ? (avgLastFive.firstContentfulPaint / 1000).toFixed(2) : 'N/A';
+  const clsAvg = avgLastFive.cumulativeLayoutShift !== undefined ? avgLastFive.cumulativeLayoutShift.toFixed(2) : 'N/A';
+  const lcpAvg = avgLastFive.largestContentfulPaint !== undefined ? (avgLastFive.largestContentfulPaint / 1000).toFixed(2) : 'N/A';
+  const fidAvg = avgLastFive.firstInputDelay !== undefined ? (avgLastFive.firstInputDelay / 1000).toFixed(2) : 'N/A';
+  const ttfbAvg = avgLastFive.timeToFirstByte !== undefined ? (avgLastFive.timeToFirstByte / 1000).toFixed(2) : 'N/A';
   const fcpAvgScore = isNaN(Number(fcpAvg)) ? 'N/A  ⚫️' : Number(fcpAvg) < 1.8 ? 'Good 🟢' : Number(fcpAvg) < 3 ? 'Fair 🟠' : 'Poor 🔴';
   const clsAvgScore = isNaN(Number(clsAvg)) ? 'N/A  ⚫️' : Number(clsAvg) < 0.1 ? 'Good 🟢' : Number(clsAvg) < 0.25 ? 'Fair 🟠' : 'Poor 🔴';
   const lcpAvgScore = isNaN(Number(lcpAvg)) ? 'N/A  ⚫️' : Number(lcpAvg) < 2.5 ? 'Good 🟢' : Number(lcpAvg) < 4 ? 'Fair 🟠' : 'Poor 🔴';
