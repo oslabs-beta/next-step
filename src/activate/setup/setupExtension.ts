@@ -10,7 +10,7 @@ export const setupExtension = () => {
   );
 
   nextStepButton.command = 'extension.generateMetrics';
-  nextStepButton.text = 'NextStep: OFF🔴';
+  nextStepButton.text = 'NextStep: OFF';
   nextStepButton.show();
 
   return nextStepButton;
