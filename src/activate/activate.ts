@@ -1,14 +1,12 @@
-// import { AsyncLocalStorage } from 'async_hooks';
 import * as vscode from 'vscode';
-//import { getVSCodeDownloadUrl } from 'vscode-test/out/util';
 import { setupExtension } from './setup/setupExtension';
 import { generateOutput } from './generateOutput/generateOutput';
 import * as path from 'path';
 
-// activate function required for 
+// activate function required for VS Code Extensions
 async function activate(context: vscode.ExtensionContext) {
   console.log("successfully entered activate");
-  // create button and start as "Off"
+  // create button and start as "OFF"
   const nextStepButton = setupExtension();
   let toggle = false;
 
@@ -30,8 +28,7 @@ async function activate(context: vscode.ExtensionContext) {
     async () => {
       console.log('Succesfully entered registerCommand');
       toggle = true;
-      // the button shows "Off" when user clicks to turn off extension
-      // once the button is clicked, the button will show "Off"
+      // once the button is clicked, the button will show "ON"
       nextStepButton.command = 'extension.stopListening';
       nextStepButton.text = 'NextStep: ON';
       output.clear();
@@ -65,12 +62,11 @@ async function activate(context: vscode.ExtensionContext) {
       'extension.stopListening',
       async () => {
         toggle = false;
-        // the button shows "Off" when user clicks to turn off extension
-        // once the button is clicked, the button will show "Off"
+        // once the button is clicked, the button will show "OFF"
         nextStepButton.command = 'extension.generateMetrics';
         nextStepButton.text = 'NextStep: OFF';
         output.clear();
-        // write functionality to stop displaying Metrics
+        // write functionality to stop displaying metrics
         console.log('Successfully entered extension.stopListening');
       }
     );
